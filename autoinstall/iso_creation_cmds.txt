@@ -1,0 +1,30 @@
+mkdir /tmp/ubuntu24
+mkdir /tmp/iso_src
+mount -o loop ubuntu-24.04-live-server-amd64.iso /tmp/iso_src
+rsync -a /tmp/iso_src/ /tmp/ubuntu24/
+umount /tmp/iso_src
+
+cd /tmp/ubuntu24
+rm -rf casper/filesystem.squashfs
+rm -rf casper/minimal.squashfs
+rm -rf dists pool install .disk
+
+kernel Cmd-line
+ip=192.168.2.50::192.168.2.1:255.255.255.0:myhost:eth0:none
+
+xorriso -as mkisofs \
+  -r -V "UBUNTU24-MINI-NETBOOT" \
+  -o ubuntu24-mini-netboot.iso \
+  -graft-points \
+  --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img \
+  -partition_offset 16 \
+  --mbr-force-bootable \
+  -append_partition 2 0xEF /tmp/ubuntu24/EFI/boot/eltorito.img \
+  -e EFI/boot/eltorito.img \
+  -no-emul-boot \
+  -boot-load-size 4 \
+  -boot-info-table \
+  /tmp/ubuntu24
+
+sudo dd if=ubuntu24-mini-netboot.iso of=/dev/sdX bs=4M status=progress && sync
+
