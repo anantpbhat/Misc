@@ -1,0 +1,14 @@
+On Ubuntu Node -
+  - sudo apt update && sudo apt upgrade -y
+  - sudo apt install ca-certificates curl openssh-server postfix tzdata perl -y
+  - Open firewall ports:
+      = sudo ufw allow http
+      = sudo ufw allow https
+      = sudo ufw allow OpenSSH
+      = sudo ufw enable   # if the firewall is not already active
+  - cd /tmp; curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+  - sudo bash /tmp/script.deb.sh
+  - sudo EXTERNAL_URL="https://your_domain_name" apt install gitlab-ce -y
+  - sudo cat /etc/gitlab/initial_root_password
+  - Access via a browser - https://your_domain_name
+  - Change root user password and create new users.
