@@ -9,6 +9,8 @@ rm -rf casper/filesystem.squashfs
 rm -rf casper/minimal.squashfs
 rm -rf dists pool install .disk
 
+vi /tmp/ubuntu24/boot/grub/grub.cfg   #refer to grub.cfg contents in this dir.
+
 kernel Cmd-line
 ip=192.168.2.50::192.168.2.1:255.255.255.0:myhost:eth0:none
 
@@ -27,4 +29,3 @@ xorriso -as mkisofs \
   /tmp/ubuntu24
 
 sudo dd if=ubuntu24-mini-netboot.iso of=/dev/sdX bs=4M status=progress && sync
-
