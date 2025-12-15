@@ -1,0 +1,162 @@
+sudo apt update && sudo apt -y upgrade
+sudo apt install -y curl wget git vim bash-completion
+sudo reboot
+
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+
+K3s installs containerd automatically, so no Docker needed.
+curl -sfL https://get.k3s.io | sh -
+Verify if kubectl is installed.
+sudo kubectl get nodes
+sudo kubectl get pods -A
+
+Make kubectl usable for your user.
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+kubectl version --client
+
+Install kustomize & Helm
+sudo snap install kustomize
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+Deploy AWX Operator.
+git clone https://github.com/ansible/awx-operator.git
+cd awx-operator
+git checkout 2.19.1   # example stable version
+make deploy
+kubectl get pods -n awx    # Should list awx-operator-controller-manager
+
+Create AWX Instance.
+kubectl create namespace awx
+vi awx.yml
+
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx
+  namespace: awx
+spec:
+  service_type: nodeport
+  nodeport_port: 30080
+  admin_user: admin
+  admin_password_secret: awx-admin-password
+  postgres_storage_class: local-path
+  projects_persistence: true
+  projects_storage_class: local-path
+  projects_storage_size: 20Gi
+
+kubectl create secret generic awx-admin-password \
+  --from-literal=password='StrongPasswordHere' \
+  -n awx
+kubectl apply -f awx.yaml
+
+Wait upto 15 mins
+kubectl get pods -n awx -w
+kubectl get svc -n awx        # Find Node Port
+
+http://<AWX_SERVER_IP>:30080  # Username - admin. Password created above.
+
+Install NGINX Controller.
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+kubectl get pods -n ingress-nginx     # Should see ingress-nginx-controller
+kubectl get svc -n ingress-nginx      # Service type NodePort or LoadBalancer
+
+Install cert-manager for TLS
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
+kubectl get pods -n cert-manager      # Should see cert-manager pods
+
+Create a Let's Encrypt Cluster Issuer
+vi cluster-issuer.yml
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: you@example.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+
+kubectl apply -f cluster-issuer.yaml
+kubectl get clusterissuer              # Status should be Ready=True
+
+Change AWX Service to ClusterIP
+kubectl edit awx awx -n awx
+
+spec:
+  service_type: clusterip
+
+Save and let K3s re-concile
+kubectl get svc -n awx                # Should see awx-service → ClusterIP
+
+Create Ingress Resource for AWX
+vi awx-ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: awx-ingress
+  namespace: awx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - awx.example.com
+    secretName: awx-tls
+  rules:
+  - host: awx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: awx-service
+            port:
+              number: 80
+
+kubectl apply -f awx-ingress.yaml
+kubectl describe certificate -n awx              # Should see Certificate Ready: True
+kubectl describe ingress awx-ingress -n awx      # Secret awx-tls created
+
+Now Access.
+https://awx.example.com
+
+Fix “CSRF verification failed”
+Set correct base URL inside AWX:
+AWX UI → Settings → System → Miscellaneous
+Base URL: https://awx.example.com
+
+Save and restart AWX pods:
+kubectl rollout restart deployment awx-web -n awx
+
+Security Hardening
+nginx.ingress.kubernetes.io/hsts: "true"
+nginx.ingress.kubernetes.io/hsts-max-age: "31536000"
+nginx.ingress.kubernetes.io/hsts-include-subdomains: "true"
+nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8"    # Restrict by IP. Change to your Subnet
+
+
+
+
+
+
+
+
+
+
+
+
