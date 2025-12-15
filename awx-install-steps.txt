@@ -149,6 +149,10 @@ nginx.ingress.kubernetes.io/hsts-max-age: "31536000"
 nginx.ingress.kubernetes.io/hsts-include-subdomains: "true"
 nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8"    # Restrict by IP. Change to your Subnet
 
+Build your own Ansible EE:
+ansible-builder build -t my-ee:latest
+Push to registry and register in AWX.
+
 
 
 
