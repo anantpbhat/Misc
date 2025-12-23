@@ -1,0 +1,228 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  # ----------------------------------------------------------------------
+  # NETWORK: Pull network settings from kernel command line
+  # ----------------------------------------------------------------------
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+      ens160:
+        dhcp4: false
+        dhcp6: false
+        addresses:
+          - 10.20.27.111/24
+        gateway4: 10.20.27.1
+        nameservers:
+          addresses:
+            - 10.30.1.5
+            - 10.30.1.6
+        # This says "use whatever installer got via kernel cmdline"
+
+  # ----------------------------------------------------------------------
+  # STORAGE CONFIGURATION
+  # ----------------------------------------------------------------------
+  storage:
+    config:
+      # ---- Physical disk ------------------------------------------------
+      - id: disk0
+        type: disk
+        match:
+          size: ">20G"
+        ptable: gpt
+        wipe: superblock-recursive
+
+      # Partition table
+      # ---- /boot partition (1G ext4, not in LVM) -------------------
+      - id: part_boot
+        type: partition
+        device: disk0
+        number: 1
+        size: 1G
+        flag: boot
+
+      # ---- LVM PV for rootvg ---------------------------------------
+      - id: part_rootvg
+        type: partition
+        device: disk0
+        number: 2
+        size: 70G
+
+      # ---- LVM PV for appsvg ----------------------------------------
+      - id: part_appsvg
+        type: partition
+        device: disk0
+        number: 3
+        size: -1
+
+      # ------------------------------------------------------------------
+      # LVM PVs
+      # ------------------------------------------------------------------
+      - id: pv_rootvg
+        type: format
+        fstype: lvm
+        volume: part_rootvg
+
+      - id: pv_appsvg
+        type: format
+        fstype: lvm
+        volume: part_appsvg
+
+      # ------------------------------------------------------------------
+      # LVM Volume Group: rootvg
+      # ------------------------------------------------------------------
+      - id: rootvg
+        type: lvm_volgroup
+        name: rootvg
+        devices: [pv_rootvg]
+
+      - id: appsvg
+        type: lvm_volgroup
+        name: appsvg
+        devices: [pv_appsvg]
+
+      - id: lv_root
+        type: lvm_partition
+        volgroup: rootvg
+        name: root
+        size: 25G
+
+      - id: lv_swap
+        type: lvm_partition
+        volgroup: rootvg
+        name: swap
+        size: 4G
+
+      - id: lv_var
+        type: lvm_partition
+        volgroup: rootvg
+        name: var
+        size: 12G
+
+      - id: lv_home
+        type: lvm_partition
+        volgroup: rootvg
+        name: home
+        size: 25G
+
+      - id: lv_apps
+        type: lvm_partition
+        volgroup: appsvg
+        name: apps
+        size: -1
+
+      # ------------------------------------------------------------------
+      # FILESYSTEM DECLARATIONS
+      # ------------------------------------------------------------------
+      # /boot
+      - id: fs_boot
+        type: format
+        fstype: ext4
+        volume: part_boot
+
+      # root (xfs)
+      - id: fs_root
+        type: format
+        fstype: xfs
+        volume: lv_root
+
+      # /var
+      - id: fs_var
+        type: format
+        fstype: xfs
+        volume: lv_var
+
+      # /home
+      - id: fs_home
+        type: format
+        fstype: xfs
+        volume: lv_home
+
+      # /apps
+      - id: fs_apps
+        type: format
+        fstype: xfs
+        volume: lv_apps
+
+      # swap
+      - id: fs_swap
+        type: format
+        fstype: swap
+        volume: lv_swap
+
+      # ------------------------------------------------------------------
+      # MOUNT POINTS
+      # ------------------------------------------------------------------
+      - id: mnt_boot
+        type: mount
+        path: /boot
+        device: fs_boot
+
+      - id: mnt_root
+        type: mount
+        path: /
+        device: fs_root
+
+      - id: mnt_var
+        type: mount
+        path: /var
+        device: fs_var
+
+      - id: mnt_home
+        type: mount
+        path: /home
+        device: fs_home
+
+      - id: mnt_apps
+        type: mount
+        path: /apps
+        device: fs_apps
+
+  # ----------------------------------------------------------------------
+  # USERS
+  # ----------------------------------------------------------------------
+  identity:
+    hostname: sandbox-vm1
+    username: ubuntu
+    password: "$6$ri66c/z6OGzL2OkI$HwJcqxEgFk7HBtnR8oGVCROVye0WX77cMMqUKJVCYojEWBFvgxvJCJ6EcT.EYaJqZfzCEQsBUrVsrvahjErEV1"
+
+  # ----------------------------------------------------------------------
+  # REPOS (Example: Foreman mirror)
+  # ----------------------------------------------------------------------
+  source:
+    id: ubuntu-server
+    search_drivers: false
+
+  apt:
+    preserve_sources_list: false
+    primary:
+      - arches: [amd64]
+        uri: http://10.20.40.30/pulp/content/Data_Dimensions/Library/custom/devtest/ubuntu/
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+  packages:
+    - bash-completion
+    - cloud-utils
+    - cloud-guest-utils
+    - git
+    - curl
+    - resolvconf
+    - htop
+    - net-tools
+    - dnsutils
+    - aptitude
+    - unzip
+  # ----------------------------------------------------------------------
+  # OPTIONAL LATE-COMMANDS
+  # ----------------------------------------------------------------------
+  late-commands:
+    - curtin in-target --update --target=/target bash -c "echo 'Ubuntu installation completed successfully!'"
