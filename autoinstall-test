@@ -25,37 +25,43 @@ autoinstall:
   # STORAGE CONFIGURATION
   # ----------------------------------------------------------------------
   storage:
+    grub:
+      reorder_uefi: False
     config:
       # ---- Physical disk ------------------------------------------------
       - id: disk0
         type: disk
         match:
-          size: ">20G"
+          size: "=80G"
         ptable: gpt
         wipe: superblock-recursive
 
       # Partition table
+      # ---- /boot/efi partition (512M fat32, not in LVM) -------------------
+      - id: part_efi
+        type: partition
+        device: disk0
+        grub_device: True
+        number: 1
+        size: 512M
+        flag: boot
+        wipe: superblock
+
       # ---- /boot partition (1G ext4, not in LVM) -------------------
       - id: part_boot
         type: partition
         device: disk0
-        number: 1
+        number: 2
         size: 1G
-        flag: boot
+        wipe: superblock
 
       # ---- LVM PV for rootvg ---------------------------------------
       - id: part_rootvg
         type: partition
         device: disk0
-        number: 2
-        size: 70G
-
-      # ---- LVM PV for appsvg ----------------------------------------
-      - id: part_appsvg
-        type: partition
-        device: disk0
         number: 3
         size: -1
+        wipe: superblock
 
       # ------------------------------------------------------------------
       # LVM PVs
@@ -65,11 +71,6 @@ autoinstall:
         fstype: lvm
         volume: part_rootvg
 
-      - id: pv_appsvg
-        type: format
-        fstype: lvm
-        volume: part_appsvg
-
       # ------------------------------------------------------------------
       # LVM Volume Group: rootvg
       # ------------------------------------------------------------------
@@ -77,11 +78,6 @@ autoinstall:
         type: lvm_volgroup
         name: rootvg
         devices: [pv_rootvg]
-
-      - id: appsvg
-        type: lvm_volgroup
-        name: appsvg
-        devices: [pv_appsvg]
 
       - id: lv_root
         type: lvm_partition
@@ -109,13 +105,19 @@ autoinstall:
 
       - id: lv_apps
         type: lvm_partition
-        volgroup: appsvg
+        volgroup: rootvg
         name: apps
-        size: -1
+        size: 10G
 
       # ------------------------------------------------------------------
       # FILESYSTEM DECLARATIONS
       # ------------------------------------------------------------------
+      # /boot/efi
+      - id: fs_efi
+        type: format
+        fstype: fat32
+        volume: part_efi
+
       # /boot
       - id: fs_boot
         type: format
@@ -155,6 +157,11 @@ autoinstall:
       # ------------------------------------------------------------------
       # MOUNT POINTS
       # ------------------------------------------------------------------
+      - id: mnt_efi
+        type: mount
+        path: /boot/efi
+        device: fs_efi
+
       - id: mnt_boot
         type: mount
         path: /boot
@@ -196,10 +203,13 @@ autoinstall:
     search_drivers: false
 
   apt:
-    preserve_sources_list: false
     primary:
-      - arches: [amd64]
-        uri: http://10.20.40.30/pulp/content/Data_Dimensions/Library/custom/devtest/ubuntu/
+      - uri: "http://10.20.40.30/pulp/content/Data_Dimensions/Library/custom/devtest/ubuntu/"
+        arches: [amd64]
+    sources:
+      noble.list:
+        source: "deb http://10.20.40.30/pulp/content/Data_Dimensions/Library/custom/devtest/ubuntu noble main"
+        keyid: 82bf43de-3abb-4bf0-9518-f9d9d7471018
 
   ssh:
     install-server: true
