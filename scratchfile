@@ -39,3 +39,10 @@ awx-task-6b9698bbdd-gtdsx                          0/4     Pending   0          
 awx-web-585dd589c5-htl9d                           0/3     Pending   0          63s
 awx-web-6cc598b7-ll77h                             0/3     Pending   0          63s
 ubuntu@sandbox-node2:~$
+
+ubuntu@sandbox-node2:~$ sudo kubectl logs -n kube-system deployment/local-path-provisioner
+I1224 16:52:48.114961       1 event.go:389] "Event occurred" object="awx/awx-projects-claim" fieldPath="" kind="PersistentVolumeClaim" apiVersion="v1" type="Warning" reason="ProvisioningFailed" message="failed to provision volume with StorageClass \"local-path-immediate\": NodePath only supports ReadWriteOnce and ReadWriteOncePod (1.22+) access modes"
+I1224 16:53:16.140588       1 controller.go:968] "Retrying syncing claim because failures < threshold" key="10a1dffc-87d3-41d4-8cf7-53fb3bb4cd8f" failures=5 threshold=15
+E1224 16:53:16.140695       1 controller.go:988] "Unhandled Error" err="error syncing claim \"10a1dffc-87d3-41d4-8cf7-53fb3bb4cd8f\": failed to provision volume with StorageClass \"local-path-immediate\": NodePath only supports ReadWriteOnce and ReadWriteOncePod (1.22+) access modes" logger="UnhandledError"
+I1224 16:53:16.140942       1 event.go:389] "Event occurred" object="awx/awx-projects-claim" fieldPath="" kind="PersistentVolumeClaim" apiVersion="v1" type="Normal" reason="Provisioning" message="External provisioner is provisioning volume for claim \"awx/awx-projects-claim\""
+I1224 16:53:16.141125       1 event.go:389] "Event occurred" object="awx/awx-projects-claim" fieldPath="" kind="PersistentVolumeClaim" apiVersion="v1" type="Warning" reason="ProvisioningFailed" message="failed to provision volume with StorageClass \"local-path-immediate\": NodePath only supports ReadWriteOnce and ReadWriteOncePod (1.22+) access modes"
