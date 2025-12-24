@@ -11,9 +11,17 @@ ubuntu@sandbox-node2:~$
 
 ubuntu@sandbox-node2:~$ sudo kubectl patch storageclass local-path -p '{"volumeBindingMode":"Immediate"}'
 The StorageClass "local-path" is invalid: volumeBindingMode: Invalid value: "Immediate": field is immutable
-ubuntu@sandbox-node2:~$ kubectl get storageclass local-path -o yaml | grep volumeBindingMode
-WARN[0000] Unable to read /etc/rancher/k3s/k3s.yaml, please start server with --write-kubeconfig-mode or --write-kubeconfig-group to modify kube config permissions
-error: error loading config file "/etc/rancher/k3s/k3s.yaml": open /etc/rancher/k3s/k3s.yaml: permission denied
+
 ubuntu@sandbox-node2:~$ sudo kubectl get storageclass local-path -o yaml | grep volumeBindingMode
 volumeBindingMode: WaitForFirstConsumer
 ubuntu@sandbox-node2:~$
+
+cat <<EOF | kubectl apply -f -
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path-immediate
+provisioner: rancher.io/local-path
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+EOF
