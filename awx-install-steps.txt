@@ -57,6 +57,7 @@ kubectl get pods -n awx -w
 kubectl get svc -n awx        # Find Node Port
 
 http://<AWX_SERVER_IP>:30080  # Username - admin. Password created above.
+kubectl get secret awx-admin-password -n awx -o jsonpath="{.data.password}" | base64 --decode
 
 Install NGINX Controller.
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
