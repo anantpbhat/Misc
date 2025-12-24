@@ -1,0 +1,10 @@
+
+ubuntu@sandbox-node2:~$ sudo kubectl get pvc -n awx
+NAME                            STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+awx-projects-claim              Pending                                                                        local-path     <unset>                 2d2h
+postgres-15-awx-postgres-15-0   Bound     pvc-4d925fab-2fb3-4e3f-b199-196f4374881d   8Gi        RWO            local-path     <unset>                 2d2h
+
+ubuntu@sandbox-node2:~$ sudo kubectl get storageclass
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  2d19h
+ubuntu@sandbox-node2:~$
