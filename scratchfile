@@ -67,3 +67,17 @@ I1224 17:08:21.518242       1 controller.go:968] "Retrying syncing claim because
 E1224 17:08:21.518373       1 controller.go:988] "Unhandled Error" err="error syncing claim \"dc91c20f-f832-4124-8316-9080de6d3671\": failed to provision volume with StorageClass \"local-path-immediate\": configuration error, no node was specified" logger="UnhandledError"
 I1224 17:08:21.518496       1 event.go:389] "Event occurred" object="awx/awx-projects-claim" fieldPath="" kind="PersistentVolumeClaim" apiVersion="v1" type="Normal" reason="Provisioning" message="External provisioner is provisioning volume for claim \"awx/awx-projects-claim\""
 I1224 17:08:21.518615       1 event.go:389] "Event occurred" object="awx/awx-projects-claim" fieldPath="" kind="PersistentVolumeClaim" apiVersion="v1" type="Warning" reason="ProvisioningFailed" message="failed to provision volume with StorageClass \"local-path-immediate\": configuration error, no node was specified"
+
+ubuntu@sandbox-node2:~$ sudo kubectl get pod -n awx
+NAME                                               READY   STATUS      RESTARTS   AGE
+awx-migration-24.6.1-bwj64                         0/1     Completed   0          15m
+awx-operator-controller-manager-58b7c97f4b-hh9mr   2/2     Running     0          17m
+awx-postgres-15-0                                  1/1     Running     0          17m
+awx-task-5b87f9d6d5-pw8cn                          4/4     Running     0          15m
+awx-web-7bdfbc5dfb-6txrl                           3/3     Running     0          17m
+ubuntu@sandbox-node2:~$ sudo kubectl get svc -n awx
+NAME                                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <none>        8443/TCP       3d
+awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP       3d
+awx-service                                       NodePort    10.43.111.116   <none>        80:30080/TCP   3d
+ubuntu@sandbox-node2:~$
