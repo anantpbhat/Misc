@@ -12,3 +12,37 @@ On Ubuntu Node -
   - sudo cat /etc/gitlab/initial_root_password
   - Access via a browser - https://your_domain_name
   - Change root user password and create new users.
+
+LDAP Configuration with AD LDAPS-
+
+sudo vi /etc/gitlab/gitlab.rb
+gitlab_rails['ldap_enabled'] = true
+
+gitlab_rails['ldap_servers'] = {
+  'main' => {
+    'label' => 'Active Directory',
+    'host' => 'ad01.corp.example.com',
+    'port' => 636,
+    'uid' => 'sAMAccountName',
+    'bind_dn' => 'CN=gitlab-svc,OU=Service Accounts,DC=corp,DC=example,DC=com',
+    'password' => 'STRONG_PASSWORD',
+    'encryption' => 'simple_tls',
+    'verify_certificates' => true,
+    'base' => 'DC=corp,DC=example,DC=com',
+    'timeout' => 10,
+    'active_directory' => true,
+    'allow_username_or_email_login' => false
+  }
+}
+
+Restrict access to specific AD group -
+'group_base' => 'OU=Security Groups,DC=corp,DC=example,DC=com',
+'required_groups' => [
+  'CN=GitLab-Users,OU=Security Groups,DC=corp,DC=example,DC=com'
+]
+
+Auto block users removed from AD -
+gitlab_rails['ldap_sync_worker_cron'] = "*/30 * * * *"
+
+Disable Local signups -
+gitlab_rails['gitlab_signup_enabled'] = false
