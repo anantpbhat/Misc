@@ -249,3 +249,17 @@ tcp6       0      0 :::10250                :::*                    LISTEN      
 tcp6       0      0 :::22                   :::*                    LISTEN      1265/sshd: /usr/sbi
 tcp6       0      0 :::6443                 :::*                    LISTEN      1256/k3s server
 ubuntu@sandbox-node2:~$
+
+ containers:
+      - args:
+        - /nginx-ingress-controller
+        - --http-port=80
+        - --https-port=443
+        - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --election-id=ingress-nginx-leader
+        - --controller-class=k8s.io/ingress-nginx
+        - --ingress-class=nginx
+        - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --validating-webhook=:8443
+        - --validating-webhook-certificate=/usr/local/certificates/cert
+        - --validating-webhook-key=/usr/local/certificates/key
