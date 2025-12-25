@@ -81,3 +81,82 @@ awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <n
 awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP       3d
 awx-service                                       NodePort    10.43.111.116   <none>        80:30080/TCP   3d
 ubuntu@sandbox-node2:~$
+
+ubuntu@sandbox-node2:~$ sudo kubectl describe certificate -n awx
+Name:         awx-tls
+Namespace:    awx
+Labels:       <none>
+Annotations:  <none>
+API Version:  cert-manager.io/v1
+Kind:         Certificate
+Metadata:
+  Creation Timestamp:  2025-12-25T15:33:35Z
+  Generation:          1
+  Owner References:
+    API Version:           networking.k8s.io/v1
+    Block Owner Deletion:  true
+    Controller:            true
+    Kind:                  Ingress
+    Name:                  awx-ingress
+    UID:                   c782c219-2f2e-4d21-9c84-9048750fddaf
+  Resource Version:        309236
+  UID:                     2bd2c3f5-ce20-49a6-9813-8328564cb6fd
+Spec:
+  Dns Names:
+    sandbox-node2.ddc.local
+  Issuer Ref:
+    Group:      cert-manager.io
+    Kind:       ClusterIssuer
+    Name:       letsencrypt-prod
+  Secret Name:  awx-tls
+  Usages:
+    digital signature
+    key encipherment
+Status:
+  Conditions:
+    Last Transition Time:    2025-12-25T15:33:35Z
+    Message:                 Issuing certificate as Secret does not exist
+    Observed Generation:     1
+    Reason:                  DoesNotExist
+    Status:                  False
+    Type:                    Ready
+    Last Transition Time:    2025-12-25T15:33:36Z
+    Message:                 The certificate request has failed to complete and will be retried: Failed to wait for order resource "awx-tls-1-2322550606" to become ready: order is in "errored" state: Failed to create Order: 400 urn:ietf:params:acme:error:rejectedIdentifier: Invalid identifiers requested :: Cannot issue for "sandbox-node2.ddc.local": Domain name does not end with a valid public suffix (TLD)
+    Observed Generation:     1
+    Reason:                  Failed
+    Status:                  False
+    Type:                    Issuing
+  Failed Issuance Attempts:  1
+  Last Failure Time:         2025-12-25T15:33:36Z
+Events:
+  Type     Reason     Age    From                                       Message
+  ----     ------     ----   ----                                       -------
+  Normal   Issuing    7m53s  cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
+  Normal   Generated  7m53s  cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "awx-tls-55vdr"
+  Normal   Requested  7m53s  cert-manager-certificates-request-manager  Created new CertificateRequest resource "awx-tls-1"
+  Warning  Failed     7m52s  cert-manager-certificates-issuing          The certificate request has failed to complete and will be retried: Failed to wait for order resource "awx-tls-1-2322550606" to become ready: order is in "errored" state: Failed to create Order: 400 urn:ietf:params:acme:error:rejectedIdentifier: Invalid identifiers requested :: Cannot issue for "sandbox-node2.ddc.local": Domain name does not end with a valid public suffix (TLD)
+ubuntu@sandbox-node2:~$
+ubuntu@sandbox-node2:~$ sudo kubectl describe ingress awx-ingress -n awx
+Name:             awx-ingress
+Labels:           <none>
+Namespace:        awx
+Address:
+Ingress Class:    nginx
+Default backend:  <default>
+TLS:
+  awx-tls terminates sandbox-node2.ddc.local
+Rules:
+  Host                     Path  Backends
+  ----                     ----  --------
+  sandbox-node2.ddc.local
+                           /   awx-service:80 (10.42.0.50:8052)
+Annotations:               cert-manager.io/cluster-issuer: letsencrypt-prod
+                           nginx.ingress.kubernetes.io/backend-protocol: HTTP
+                           nginx.ingress.kubernetes.io/proxy-body-size: 50m
+                           nginx.ingress.kubernetes.io/ssl-redirect: true
+Events:
+  Type    Reason             Age                 From                       Message
+  ----    ------             ----                ----                       -------
+  Normal  Sync               8m7s (x2 over 22m)  nginx-ingress-controller   Scheduled for sync
+  Normal  CreateCertificate  8m7s                cert-manager-ingress-shim  Successfully created Certificate "awx-tls"
+ubuntu@sandbox-node2:~$
