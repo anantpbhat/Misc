@@ -232,3 +232,20 @@ awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <n
 awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   3d18h
 awx-service                                       ClusterIP   10.43.111.116   <none>        80/TCP     3d18h
 ubuntu@sandbox-node2:~$
+
+ubuntu@sandbox-node2:~$ sudo netstat -lntp | grep -E ':80|:443'
+ubuntu@sandbox-node2:~$ sudo netstat -lntp | grep -i listen
+tcp        0      0 127.0.0.1:10010         0.0.0.0:*               LISTEN      1559/containerd
+tcp        0      0 127.0.0.1:10248         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.1:10249         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.1:10256         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.1:10257         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.1:10258         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.1:10259         0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1265/sshd: /usr/sbi
+tcp        0      0 127.0.0.1:6444          0.0.0.0:*               LISTEN      1256/k3s server
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      1156/systemd-resolv
+tcp6       0      0 :::10250                :::*                    LISTEN      1256/k3s server
+tcp6       0      0 :::22                   :::*                    LISTEN      1265/sshd: /usr/sbi
+tcp6       0      0 :::6443                 :::*                    LISTEN      1256/k3s server
+ubuntu@sandbox-node2:~$
