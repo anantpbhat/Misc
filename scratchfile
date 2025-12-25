@@ -178,3 +178,34 @@ awx-postgres-15                                   ClusterIP   None            <n
 awx-service                                       ClusterIP   10.43.111.116   <none>        80/TCP     3d18h
 ubuntu@sandbox-node2:~$
 ubuntu@sandbox-node2:~$
+
+ubuntu@sandbox-node2:~$ sudo kubectl get svc -n ingress-nginx
+NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller             NodePort    10.43.46.22    <none>        80:31035/TCP,443:31990/TCP   3d17h
+ingress-nginx-controller-admission   ClusterIP   10.43.50.154   <none>        443/TCP                      3d17h
+ubuntu@sandbox-node2:~$
+ubuntu@sandbox-node2:~$ sudo kubectl describe ingress awx-ingress -n awx
+Name:             awx-ingress
+Labels:           <none>
+Namespace:        awx
+Address:          10.43.46.22
+Ingress Class:    nginx
+Default backend:  <default>
+TLS:
+  awx-tls terminates sandbox-node2.ddc.local
+Rules:
+  Host                     Path  Backends
+  ----                     ----  --------
+  sandbox-node2.ddc.local
+                           /   awx-service:80 (10.42.0.51:8052)
+Annotations:               cert-manager.io/cluster-issuer: letsencrypt-prod
+                           nginx.ingress-kubernetes.io/ssl-redirect: false
+                           nginx.ingress.kubernetes.io/backend-protocol: HTTP
+                           nginx.ingress.kubernetes.io/proxy-body-size: 50m
+                           nginx.ingress.kubernetes.io/ssl-redirect: false
+Events:
+  Type    Reason             Age                  From                       Message
+  ----    ------             ----                 ----                       -------
+  Normal  CreateCertificate  29m                  cert-manager-ingress-shim  Successfully created Certificate "awx-tls"
+  Normal  Sync               2m30s (x5 over 43m)  nginx-ingress-controller   Scheduled for sync
+ubuntu@sandbox-node2:~$
