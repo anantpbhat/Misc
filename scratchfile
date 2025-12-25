@@ -160,3 +160,21 @@ Events:
   Normal  Sync               8m7s (x2 over 22m)  nginx-ingress-controller   Scheduled for sync
   Normal  CreateCertificate  8m7s                cert-manager-ingress-shim  Successfully created Certificate "awx-tls"
 ubuntu@sandbox-node2:~$
+
+
+ubuntu@sandbox-node2:~$ sudo kubectl get pod -n awx
+NAME                                               READY   STATUS      RESTARTS   AGE
+awx-migration-24.6.1-bwj64                         0/1     Completed   0          18h
+awx-operator-controller-manager-58b7c97f4b-hh9mr   2/2     Running     0          18h
+awx-postgres-15-0                                  1/1     Running     0          18h
+awx-task-5b87f9d6d5-pw8cn                          4/4     Running     0          18h
+awx-web-85887d45cd-c2mw7                           3/3     Running     0          14m
+ubuntu@sandbox-node2:~$
+ubuntu@sandbox-node2:~$
+ubuntu@sandbox-node2:~$ sudo kubectl get svc -n awx
+NAME                                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <none>        8443/TCP   3d18h
+awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   3d18h
+awx-service                                       ClusterIP   10.43.111.116   <none>        80/TCP     3d18h
+ubuntu@sandbox-node2:~$
+ubuntu@sandbox-node2:~$
