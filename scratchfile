@@ -263,3 +263,12 @@ ubuntu@sandbox-node2:~$
         - --validating-webhook=:8443
         - --validating-webhook-certificate=/usr/local/certificates/cert
         - --validating-webhook-key=/usr/local/certificates/key
+
+ubuntu@sandbox-node2:~$ sudo kubectl get pod -n ingress-nginx
+NAME                                       READY   STATUS    RESTARTS   AGE
+ingress-nginx-controller-f7f587656-zc55l   0/1     Pending   0          48s
+ubuntu@sandbox-node2:~$ sudo kubectl get svc -n ingress-nginx
+NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+ingress-nginx-controller             ClusterIP   10.43.46.22    <none>        80/TCP,443/TCP   3d20h
+ingress-nginx-controller-admission   ClusterIP   10.43.50.154   <none>        443/TCP          3d20h
+ubuntu@sandbox-node2:~$
