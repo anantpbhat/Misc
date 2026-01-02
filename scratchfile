@@ -1,27 +1,2 @@
 
-#
-# This file was deployed via 'DD-Custom Ubuntu24_04 Preseed PXEGrub2' template
-
-set default=0
-set timeout=10
-
-menuentry 'DD-Custom Ubuntu24_04 Preseed PXEGrub2' {
-  linux  boot/ubuntu-24-04-local-mirror-4ZrLldJoYAEv-vmlinuz ip=dhcp url=http://10.20.27.110/pub/mirror/ubuntu-24.04.3/ autoinstall ds=nocloud-net\;s=http://10.20.27.110/unattended/provision?token=088ca39a-6c27-4850-8849-f8678fb2ab77 BOOTIF=00:0c:29:0f:e6:06 hostname=sandbox-vm1.ddc.local locale=en_US
-  initrd boot/ubuntu-24-04-local-mirror-4ZrLldJoYAEv-initrd
-}
-
-[ubuntu@sandbox-foremanalma tftpboot]$ ls -al /var/www/html/pub/mirror/ubuntu-24.04.3
-total 40
-dr-xr-xr-x 9 root root   148 Aug  5 19:53 .
-drwxr-xr-x 3 root root    72 Dec 27 17:22 ..
-dr-xr-xr-x 3 root root    43 Jul 25 13:19 boot
--r--r--r-- 1 root root  2048 Aug  5 19:54 boot.catalog
-dr-xr-xr-x 2 root root  4096 Jan  1 10:14 casper
-dr-xr-xr-x 2 root root   115 Aug  5 19:53 .disk
-dr-xr-xr-x 3 root root    49 Aug  5 19:44 dists
-dr-xr-xr-x 3 root root    18 Jul 25 13:19 EFI
-dr-xr-xr-x 2 root root     6 Aug  5 19:44 install
--r--r--r-- 1 root root 30205 Aug  5 19:54 md5sum.txt
-dr-xr-xr-x 4 root root    36 Aug  5 19:46 pool
-lrwxrwxrwx 1 root root     1 Aug  5 19:44 ubuntu -> .
-[ubuntu@sandbox-foremanalma tftpboot]$
+AWX in version "v1beta1" cannot be handled as a AWX: strict decoding error: unknown field "spec.extra_volumes[0].name", unknown field "spec.extra_volumes[0].secret", unknown field "spec.web_extra_volume_mounts[0].mountPath", unknown field "spec.web_extra_volume_mounts[0].name", unknown field "spec.web_extra_volume_mounts[0].readOnly"
