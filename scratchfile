@@ -1,2 +1,27 @@
 
-AWX in version "v1beta1" cannot be handled as a AWX: strict decoding error: unknown field "spec.extra_volumes[0].name", unknown field "spec.extra_volumes[0].secret", unknown field "spec.web_extra_volume_mounts[0].mountPath", unknown field "spec.web_extra_volume_mounts[0].name", unknown field "spec.web_extra_volume_mounts[0].readOnly"
+[ubuntu@sandbox-foremanalma certs]$ sudo foreman-installer --scenario katello --certs-server-ca-cert "/etc/pki/tls/certs/jpvddcert001.crt" --certs-update-server-ca
+2026-01-07 09:08:59 [NOTICE] [root] Loading installer configuration. This will take some time.
+2026-01-07 09:09:13 [NOTICE] [root] Running installer with log based terminal output at level NOTICE.
+2026-01-07 09:09:13 [NOTICE] [root] Use -l to set the terminal output log level to ERROR, WARN, NOTICE, INFO, or DEBUG. See --full-help for definitions.
+2026-01-07 09:09:17 [NOTICE] [checks] System checks passed
+readlink: missing operand
+Try 'readlink --help' for more information.
+readlink: missing operand
+Try 'readlink --help' for more information.
+One of the required parameters is missing.
+Verifies, that custom SSL certificate files are usable
+as part of the Katello installation. When passing filenames use absolute paths.
+
+usage: /sbin/katello-certs-check -t [foreman|foreman-proxy] -c CERT_FILE -k KEY_FILE -b CA_BUNDLE_FILE
+
+2026-01-07 09:09:21 [ERROR ] [root] readlink: missing operand
+Try 'readlink --help' for more information.
+readlink: missing operand
+Try 'readlink --help' for more information.
+One of the required parameters is missing.
+Verifies, that custom SSL certificate files are usable
+as part of the Katello installation. When passing filenames use absolute paths.
+
+usage: /sbin/katello-certs-check -t [foreman|foreman-proxy] -c CERT_FILE -k KEY_FILE -b CA_BUNDLE_FILE
+
+[ubuntu@sandbox-foremanalma certs]$
