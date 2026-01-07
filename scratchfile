@@ -25,3 +25,5 @@ as part of the Katello installation. When passing filenames use absolute paths.
 usage: /sbin/katello-certs-check -t [foreman|foreman-proxy] -c CERT_FILE -k KEY_FILE -b CA_BUNDLE_FILE
 
 [ubuntu@sandbox-foremanalma certs]$
+
+sudo foreman-installer --scenario katello --certs-server-ca-cert "/etc/pki/tls/certs/jpvddcert001.crt" --certs-update-server-ca --certs-server-cert /etc/pki/katello/certs/katello-apache.crt --certs-server-key /etc/pki/katello/private/katello-apache.key --certs-server-ca-cert /etc/pki/katello/certs/katello-server-ca.crt
