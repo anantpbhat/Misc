@@ -11,41 +11,43 @@ network:
       dhcp4-overrides:
         use-dns: false
 
+Step 70/74 : RUN rm -rf /output
+ ---> Running in b2aca5786784
+ ---> Removed intermediate container b2aca5786784
+ ---> 00c6466956ed
+Step 71/74 : LABEL ansible-execution-environment=true
+ ---> Running in 843bc451caae
+ ---> Removed intermediate container 843bc451caae
+ ---> db06a23fc301
+Step 72/74 : USER 1000
+ ---> Running in 5c28d53da8b7
+ ---> Removed intermediate container 5c28d53da8b7
+ ---> 4c23b8cb1894
+Step 73/74 : ENTRYPOINT ["/opt/builder/bin/entrypoint", "dumb-init"]
+ ---> Running in e641923544bb
+ ---> Removed intermediate container e641923544bb
+ ---> 963a73822bcd
+Step 74/74 : CMD ["bash"]
+ ---> Running in 49170cd3490f
+ ---> Removed intermediate container 49170cd3490f
+ ---> b804affe680e
+Successfully built b804affe680e
+Successfully tagged dd-custom-ee:latest
 
-    gcc -Wno-unused-result -Wsign-compare -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DNDEBUG -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -fPIC -I/usr/include/libxml2 -I/usr/include/python3.9 -c ext/ov_xml_reader.c -o build/temp.linux-x86_64-3.9/ext/ov_xml_reader.o
-    ext/ov_xml_reader.c:20:10: fatal error: libxml/xmlreader.h: No such file or directory
-       20 | #include <libxml/xmlreader.h>
-          |          ^~~~~~~~~~~~~~~~~~~~
-    compilation terminated.
-    error: command '/usr/bin/gcc' failed with exit code 1
-    ----------------------------------------
-ERROR: Command errored out with exit status 1: /usr/bin/python3 -u -c 'import io, os, sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-insl52hu/ovirt-engine-sdk-python_04581228076c4bb8b26960e5d82c96a1/setup.py'"'"'; __file__='"'"'/tmp/pip-install-insl52hu/ovirt-engine-sdk-python_04581228076c4bb8b26960e5d82c96a1/setup.py'"'"';f = getattr(tokenize, '"'"'open'"'"', open)(__file__) if os.path.exists(__file__) else io.StringIO('"'"'from setuptools import setup; setup()'"'"');code = f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' install --record /tmp/pip-record-lx_q32y2/install-record.txt --single-version-externally-managed --compile --install-headers /usr/local/include/python3.9/ovirt-engine-sdk-python Check the logs for full command output.
-WARNING: You are using pip version 21.3.1; however, version 26.0.1 is available.
-You should consider upgrading via the '/usr/bin/python3 -m pip install --upgrade pip' command.
-The command '/bin/sh -c /output/scripts/install-from-bindep && rm -rf /output/wheels' returned a non-zero code: 1
-
-An error occurred (rc=1), see output line(s) above for details.
-
-version: 3
-
-images:
-  base_image:
-    name: quay.io/ansible/awx-ee:latest
-
-dependencies:
-  ansible_core:
-    package_pip: ansible-core
-  ansible_runner:
-    package_pip: ansible-runner
-  galaxy:
-    collections:
-      - name: community.general
-      - name: ansible.posix
-      - name: amazon.aws  # add any others you need
-      - name: dellemc.openmanage
-
-additional_build_steps:
-  prepend_galaxy:
-    - RUN pip install --upgrade pip
-  prepend_final:
-    - RUN dnf install -y gcc python3-devel make && dnf clean all
+Complete! The build context can be found at: /home/ubuntu/context
+$
+$ ls -l context/
+total 8
+drwxrwxr-x 3 ubuntu ubuntu 4096 Feb 22 22:54 _build
+-rw-rw-r-- 1 ubuntu ubuntu 2771 Feb 22 22:54 Dockerfile
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker images
+REPOSITORY               TAG       IMAGE ID       CREATED          SIZE
+dd-custom-ee             latest    b804affe680e   2 minutes ago    3.92GB
+<none>                   <none>    018fbeef4210   12 minutes ago   3.92GB
+<none>                   <none>    2aff4d783ec4   22 minutes ago   2.24GB
+quay.io/ansible/awx-ee   latest    af6b6cba903c   10 months ago    2.15GB
+$
