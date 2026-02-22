@@ -10,3 +10,42 @@ network:
           - datadimensions.com
       dhcp4-overrides:
         use-dns: false
+
+
+    gcc -Wno-unused-result -Wsign-compare -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DNDEBUG -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -fPIC -I/usr/include/libxml2 -I/usr/include/python3.9 -c ext/ov_xml_reader.c -o build/temp.linux-x86_64-3.9/ext/ov_xml_reader.o
+    ext/ov_xml_reader.c:20:10: fatal error: libxml/xmlreader.h: No such file or directory
+       20 | #include <libxml/xmlreader.h>
+          |          ^~~~~~~~~~~~~~~~~~~~
+    compilation terminated.
+    error: command '/usr/bin/gcc' failed with exit code 1
+    ----------------------------------------
+ERROR: Command errored out with exit status 1: /usr/bin/python3 -u -c 'import io, os, sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-insl52hu/ovirt-engine-sdk-python_04581228076c4bb8b26960e5d82c96a1/setup.py'"'"'; __file__='"'"'/tmp/pip-install-insl52hu/ovirt-engine-sdk-python_04581228076c4bb8b26960e5d82c96a1/setup.py'"'"';f = getattr(tokenize, '"'"'open'"'"', open)(__file__) if os.path.exists(__file__) else io.StringIO('"'"'from setuptools import setup; setup()'"'"');code = f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' install --record /tmp/pip-record-lx_q32y2/install-record.txt --single-version-externally-managed --compile --install-headers /usr/local/include/python3.9/ovirt-engine-sdk-python Check the logs for full command output.
+WARNING: You are using pip version 21.3.1; however, version 26.0.1 is available.
+You should consider upgrading via the '/usr/bin/python3 -m pip install --upgrade pip' command.
+The command '/bin/sh -c /output/scripts/install-from-bindep && rm -rf /output/wheels' returned a non-zero code: 1
+
+An error occurred (rc=1), see output line(s) above for details.
+
+version: 3
+
+images:
+  base_image:
+    name: quay.io/ansible/awx-ee:latest
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core
+  ansible_runner:
+    package_pip: ansible-runner
+  galaxy:
+    collections:
+      - name: community.general
+      - name: ansible.posix
+      - name: amazon.aws  # add any others you need
+      - name: dellemc.openmanage
+
+additional_build_steps:
+  prepend_galaxy:
+    - RUN pip install --upgrade pip
+  prepend_final:
+    - RUN dnf install -y gcc python3-devel make && dnf clean all
