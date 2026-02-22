@@ -51,3 +51,32 @@ dd-custom-ee             latest    b804affe680e   2 minutes ago    3.92GB
 <none>                   <none>    2aff4d783ec4   22 minutes ago   2.24GB
 quay.io/ansible/awx-ee   latest    af6b6cba903c   10 months ago    2.15GB
 $
+$ kubectl get pods -n awx
+NAME                                               READY   STATUS      RESTARTS      AGE
+awx-migration-24.6.1-bwj64                         0/1     Completed   0             60d
+awx-operator-controller-manager-5fb4bbddc9-7ml58   2/2     Running     2 (10d ago)   53d
+awx-postgres-15-0                                  1/1     Running     1 (10d ago)   53d
+awx-task-dfb7b6dbd-4m5t6                           4/4     Running     0             28h
+awx-web-767595676b-pwwff                           3/3     Running     0             28h
+$
+$ kubectl get svc -n awx
+NAME                                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <none>        8443/TCP   63d
+awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   63d
+awx-service                                       ClusterIP   10.43.111.116   <none>        80/TCP     63d
+$
+$ kubectl get namespaces
+NAME              STATUS   AGE
+awx               Active   63d
+cert-manager      Active   59d
+default           Active   63d
+kube-node-lease   Active   63d
+kube-public       Active   63d
+kube-system       Active   63d
+$
+$ kubectl get svc -n kube-system
+NAME             TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                      AGE
+kube-dns         ClusterIP      10.43.0.10      <none>         53/UDP,53/TCP,9153/TCP       63d
+metrics-server   ClusterIP      10.43.170.13    <none>         443/TCP                      63d
+traefik          LoadBalancer   10.43.157.203   10.10.10.14   80:31769/TCP,443:30967/TCP   59d
+$
