@@ -87,3 +87,6 @@ jpvdddokr001.ddc.local:443/dd-custom-awx-ee   latest    dbb35580df5a   About an 
 <none>                                        <none>    165f9e860798   2 hours ago         3.92GB
 <none>                                        <none>    2904489b05eb   2 hours ago         2.24GB
 quay.io/ansible/awx-ee                        latest    af6b6cba903c   10 months ago       2.15GB
+
+Receptor detail:
+Error creating pod: container failed to start, ImagePullBackOff
