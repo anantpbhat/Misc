@@ -1,92 +1,12 @@
 
-network:
-  version: 2
-  ethernets:
-    ens5:
-      nameservers:
-        addresses: ["10.20.1.5","10.20.1.6"]
-        search:
-          - ddc.local
-          - datadimensions.com
-      dhcp4-overrides:
-        use-dns: false
-
-Step 70/74 : RUN rm -rf /output
- ---> Running in b2aca5786784
- ---> Removed intermediate container b2aca5786784
- ---> 00c6466956ed
-Step 71/74 : LABEL ansible-execution-environment=true
- ---> Running in 843bc451caae
- ---> Removed intermediate container 843bc451caae
- ---> db06a23fc301
-Step 72/74 : USER 1000
- ---> Running in 5c28d53da8b7
- ---> Removed intermediate container 5c28d53da8b7
- ---> 4c23b8cb1894
-Step 73/74 : ENTRYPOINT ["/opt/builder/bin/entrypoint", "dumb-init"]
- ---> Running in e641923544bb
- ---> Removed intermediate container e641923544bb
- ---> 963a73822bcd
-Step 74/74 : CMD ["bash"]
- ---> Running in 49170cd3490f
- ---> Removed intermediate container 49170cd3490f
- ---> b804affe680e
-Successfully built b804affe680e
-Successfully tagged dd-custom-ee:latest
-
-Complete! The build context can be found at: /home/ubuntu/context
-$
-$ ls -l context/
-total 8
-drwxrwxr-x 3 ubuntu ubuntu 4096 Feb 22 22:54 _build
--rw-rw-r-- 1 ubuntu ubuntu 2771 Feb 22 22:54 Dockerfile
-$ docker ps
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-$ docker ps -a
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-$ docker images
-REPOSITORY               TAG       IMAGE ID       CREATED          SIZE
-dd-custom-ee             latest    b804affe680e   2 minutes ago    3.92GB
-<none>                   <none>    018fbeef4210   12 minutes ago   3.92GB
-<none>                   <none>    2aff4d783ec4   22 minutes ago   2.24GB
-quay.io/ansible/awx-ee   latest    af6b6cba903c   10 months ago    2.15GB
-$
-$ kubectl get pods -n awx
-NAME                                               READY   STATUS      RESTARTS      AGE
-awx-migration-24.6.1-bwj64                         0/1     Completed   0             60d
-awx-operator-controller-manager-5fb4bbddc9-7ml58   2/2     Running     2 (10d ago)   53d
-awx-postgres-15-0                                  1/1     Running     1 (10d ago)   53d
-awx-task-dfb7b6dbd-4m5t6                           4/4     Running     0             28h
-awx-web-767595676b-pwwff                           3/3     Running     0             28h
-$
-$ kubectl get svc -n awx
-NAME                                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-awx-operator-controller-manager-metrics-service   ClusterIP   10.43.27.26     <none>        8443/TCP   63d
-awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   63d
-awx-service                                       ClusterIP   10.43.111.116   <none>        80/TCP     63d
-$
-$ kubectl get namespaces
-NAME              STATUS   AGE
-awx               Active   63d
-cert-manager      Active   59d
-default           Active   63d
-kube-node-lease   Active   63d
-kube-public       Active   63d
-kube-system       Active   63d
-$
-$ kubectl get svc -n kube-system
-NAME             TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                      AGE
-kube-dns         ClusterIP      10.43.0.10      <none>         53/UDP,53/TCP,9153/TCP       63d
-metrics-server   ClusterIP      10.43.170.13    <none>         443/TCP                      63d
-traefik          LoadBalancer   10.43.157.203   10.10.10.14   80:31769/TCP,443:30967/TCP   59d
-$
-$ docker images
-REPOSITORY                                    TAG       IMAGE ID       CREATED             SIZE
-dd-custom-awx-ee                              latest    dbb35580df5a   About an hour ago   3.92GB
-jpvdddokr001.ddc.local:443/dd-custom-awx-ee   latest    dbb35580df5a   About an hour ago   3.92GB
-<none>                                        <none>    165f9e860798   2 hours ago         3.92GB
-<none>                                        <none>    2904489b05eb   2 hours ago         2.24GB
-quay.io/ansible/awx-ee                        latest    af6b6cba903c   10 months ago       2.15GB
 
 Receptor detail:
 Error creating pod: container failed to start, ImagePullBackOff
+
+
+/ # wget https://jpvdddokr001.ddc.local:443
+Connecting to jpvdddokr001.ddc.local:443 (10.20.40.31:443)
+wget: note: TLS certificate validation not implemented
+saving to 'index.html'
+'index.html' saved
+/ #
