@@ -1,25 +1,34 @@
 
+vault-unseal.sh[2555]: failed to get token helper: open /home/vault/.vault: permission denied
 
-Receptor detail:
-Error creating pod: container failed to start, ImagePullBackOff
+[Unit]
+Description=Vault Unseal Script
+After=vault.service
+Requires=vault.service
+PartOf=vault.service
 
+[Service]
+Type=oneshot
+User=vault
+Group=bin
+Environment="VAULT_TOKEN_HELPER="
+EnvironmentFile=/etc/vault.d/vault-unseal.env
+ExecStartPre=/bin/echo "Waiting 15 seconds before unsealing Vault..."
+ExecStartPre=/bin/sleep 15
+ExecStart=/usr/local/bin/vault-unseal.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=5
 
-/ # wget https://jpvdddokr001.ddc.local:443
-Connecting to jpvdddokr001.ddc.local:443 (10.20.40.31:443)
-wget: note: TLS certificate validation not implemented
-saving to 'index.html'
-'index.html' saved
-/ #
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/vault.d
 
-Feb 26 20:30:28 awx001.example.net k3s[5010]: E0226 20:30:28.550855    5010 pod_workers.go:1324] "Error syncing pod, skipping" err="failed to \"StartContainer\" for \"worker\" with ImagePullBackOff: \"Back-off pulling image \\\"dokr001.example.net:443/dd-custom-awx-ee:latest\\\": ErrImagePull: failed to pull and unpack image \\\"dokr001.example.net:443/dd-custom-awx-ee:latest\\\": failed to resolve reference \\\"dokr001.example.net:443/dd-custom-awx-ee:latest\\\": failed to do request: Head \\\"https://dokr001.example.net:443/v2/dd-custom-awx-ee/manifests/latest\\\": tls: failed to verify certificate: x509: certificate signed by unknown authority\"" pod="awx/automation-job-1796-ts89p" podUID="2ad87798-1d61-49eb-a969-726d12c64438"
-
-$ ls -l /etc/rancher/k3s
-total 8
--rw------- 1 root root 2945 Feb 26 20:54 k3s.yaml
--rw-r----- 1 root root   83 Feb 26 20:53 registries.yml
-ubuntu@jpvddawx001:~$ cat /etc/rancher/k3s/registries.yml
-configs:
-  "jpvdddokr001.ddc.local:443":
-    tls:
-      insecure_skip_verify: true
-ubuntu@jpvddawx001:~$
+[Install]
+WantedBy=multi-user.target
